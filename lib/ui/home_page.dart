@@ -87,10 +87,120 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       onTap: () {
-        _showContactPage(contact: contacts[index]);
+        _showOptions(context, index);
     },
     );
   }
+
+  void _showOptions (BuildContext context, int index) {
+    showModalBottomSheet(context: context,
+        builder: (context){
+          return BottomSheet(
+            onClosing: () {},
+            builder: (context) {
+              return Container(
+                padding: EdgeInsets.all(10.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: FlatButton(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(Icons.phone, color: Colors.red,),
+                            Padding(
+                              padding: EdgeInsets.only(left: 10.0),
+                              child: Text("Ligar", style: TextStyle(color: Colors.red, fontSize: 20.0),),
+                            )
+                          ],
+                        ),
+
+                        onPressed: () {
+                          //_showContactPage(contact: contact[index]);
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: FlatButton(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(Icons.edit, color: Colors.red,),
+                            Padding(
+                              padding: EdgeInsets.only(left: 10.0),
+                              child: Text("Editar", style: TextStyle(color: Colors.red, fontSize: 20.0),),
+                            )
+                          ],
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _showContactPage(contact: contacts[index]);
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: FlatButton(
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(Icons.delete, color: Colors.red,),
+                              Padding(
+                                padding: EdgeInsets.only(left: 10.0),
+                                child: Text("Excluir", style: TextStyle(color: Colors.red, fontSize: 20.0),),
+                              )
+                            ],
+                          ),
+                        ),
+                        onPressed: () {
+                         _confirmDelete(contacts[index], index);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        });
+  }
+
+  Future<bool> _confirmDelete (Contact contact, int index) {
+
+      showDialog(context: context,
+          builder: (context){
+            return AlertDialog(
+              title: Text("Excluir o contato?"),
+              content: Text("Se excluir esse contato, você perderá todas as informações sobre ele"),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Cancelar"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                ),
+                FlatButton(
+                  child: Text("Confirmar"),
+                  onPressed: () {
+                    helper.deleteContact(contact.id);
+                    setState(() {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      contacts.removeAt(index);
+                    });
+                  },
+                ),
+              ],
+            );
+          }
+      );
+      return Future.value(false);
+    }
 
   void _showContactPage({Contact contact}) async {
     final recContact = await Navigator.push(context,
@@ -113,6 +223,7 @@ class _HomePageState extends State<HomePage> {
       });
     });
   }
+
 }
 
 class HomePage extends StatefulWidget {
